@@ -3,6 +3,14 @@ require('dotenv').config();
 const express = require("express");
 const cors = require("cors");
 const db = require("./config/db");
+// 🔥 PREVENT CRASH ON DB FAIL
+process.on("uncaughtException", (err) => {
+  console.error("🔥 UNCAUGHT:", err);
+});
+
+process.on("unhandledRejection", (err) => {
+  console.error("🔥 UNHANDLED:", err);
+});
 const bcrypt = require("bcryptjs");
 const path = require("path");
 const fs = require("fs");
