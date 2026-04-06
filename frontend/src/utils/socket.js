@@ -16,13 +16,9 @@ if (!SOCKET_URL) {
 // 🔥 SOCKET CONNECTION
 // ==========================
 export const socket = io(SOCKET_URL, {
-transports: ["websocket", "polling"],
+  transports: ["websocket"],
   withCredentials: true,
-  secure: true,
   reconnection: true,
-  reconnectionAttempts: 5,
-  reconnectionDelay: 2000,
-  timeout: 20000,
 });
 
 // ==========================

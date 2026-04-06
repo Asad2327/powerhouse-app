@@ -19,10 +19,15 @@ if (!BASE_URL) {
 // ==========================
 const API = axios.create({
   baseURL: BASE_URL,
+  headers: {
+  "Content-Type": "application/json"
+},
   withCredentials: true,
-  timeout: 60000 // 🔥 prevent hanging requests
+  timeout: 60000, // 🔥 prevent hanging requests
+  headers: {
+    "Content-Type": "application/json"
+  }
 });
-
 // ==========================
 // 🔥 REQUEST INTERCEPTOR
 // ==========================
