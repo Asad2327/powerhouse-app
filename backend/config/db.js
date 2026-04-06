@@ -1,21 +1,28 @@
 require('dotenv').config();
 const mysql = require('mysql2');
 
-// 🔥 FINAL DB CONNECTION FIX
-const db = mysql.createPool(process.env.MYSQL_URL);
+// 🔥 FINAL WORKING CONFIG (Railway FIX)
+const db = mysql.createPool({
+  uri: process.env.MYSQL_URL,
 
-// ✅ PROMISE SUPPORT
-const promiseDb = db.promise();
+  ssl: {
+    rejectUnauthorized: false
+  },
+
+  waitForConnections: true,
+  connectionLimit: 10,
+  queueLimit: 0,
+  connectTimeout: 10000
+});
 
 // ✅ TEST CONNECTION
 db.getConnection((err, conn) => {
   if (err) {
-    console.error("❌ DB CONNECTION FAILED:", err.message);
+    console.error("❌ DB CONNECTION ERROR:", err.message);
   } else {
-    console.log("✅ DB Connected Successfully");
+    console.log("✅ DB CONNECTED SUCCESSFULLY");
     conn.release();
   }
 });
 
 module.exports = db;
-module.exports.promiseDb = promiseDb;
