@@ -11,8 +11,13 @@ const { Server } = require("socket.io");
 
 const app = express();
 const server = http.createServer(app);
+
 server.keepAliveTimeout = 60000;
 server.headersTimeout = 65000;
+
+// ==========================
+// 🔥 GLOBAL ERROR HANDLING
+// ==========================
 process.on("uncaughtException", (err) => {
   console.error("🔥 UNCAUGHT EXCEPTION:", err);
 });
@@ -20,12 +25,12 @@ process.on("uncaughtException", (err) => {
 process.on("unhandledRejection", (err) => {
   console.error("🔥 UNHANDLED REJECTION:", err);
 });
+
 // ==========================
-// 🌐 FRONTEND URL (PRODUCTION FIX)
+// 🌐 FRONTEND URL
 // ==========================
 const FRONTEND_URL = process.env.FRONTEND_URL;
 
-// fallback safe handling
 const allowedOrigins = [
   "http://localhost:5173",
   FRONTEND_URL,
@@ -34,7 +39,7 @@ const allowedOrigins = [
 ].filter(Boolean);
 
 // ==========================
-// 🔥 SOCKET SETUP (FIXED FINAL)
+// 🔥 SOCKET SETUP
 // ==========================
 const io = new Server(server, {
   cors: {
@@ -42,7 +47,7 @@ const io = new Server(server, {
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true
   },
-transports: ["websocket", "polling"]
+  transports: ["websocket", "polling"]
 });
 
 app.set("io", io);
@@ -52,11 +57,11 @@ app.set("io", io);
 // ==========================
 io.on("connection", (socket) => {
   console.log("⚡ Client connected:", socket.id);
-  socket.onAny((event, ...args) => {
-  console.log("📡 EVENT:", event, args);
-});
 
-  // ✅ JOIN USER ROOM
+  socket.onAny((event, ...args) => {
+    console.log("📡 EVENT:", event, args);
+  });
+
   socket.on("joinUser", (userId) => {
     socket.join(`user_${userId}`);
     console.log(`👤 User joined room: user_${userId}`);
@@ -70,7 +75,7 @@ io.on("connection", (socket) => {
 });
 
 // ==========================
-// 📦 ROUTES
+// 📦 ROUTES IMPORT
 // ==========================
 const userRoutes = require("./routes/user");
 const authRoutes = require("./routes/auth");
@@ -79,17 +84,22 @@ const activityRoutes = require("./routes/activity");
 const toolsRoutes = require("./routes/tools");
 
 // ==========================
-// 🧠 MIDDLEWARES (FINAL FIX)
+// 🧠 MIDDLEWARES
 // ==========================
 app.use(cors({
-  origin: "*",
+  origin: allowedOrigins,
   methods: ["GET", "POST", "PUT", "DELETE"],
   credentials: true
 }));
 
-// 🔥 FIX preflight properly
+// ✅ FIXED PREFLIGHT (IMPORTANT)
 app.options("*", (req, res) => {
-  res.header("Access-Control-Allow-Origin", req.headers.origin || "*");
+  const origin = req.headers.origin;
+
+  if (allowedOrigins.includes(origin)) {
+    res.header("Access-Control-Allow-Origin", origin);
+  }
+
   res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
   res.header("Access-Control-Allow-Headers", "Content-Type, Authorization, role");
   res.header("Access-Control-Allow-Credentials", "true");
@@ -118,6 +128,19 @@ app.use("/api/auth", authRoutes);
 app.use("/api/task", taskRoutes);
 app.use("/api/activity", activityRoutes);
 app.use("/api/tools", toolsRoutes);
+
+// ==========================
+// 🧪 DB TEST ROUTE (FIXED POSITION)
+// ==========================
+app.get("/test-db", async (req, res) => {
+  try {
+    const [rows] = await db.promise().query("SELECT 1");
+    res.json({ success: true, msg: "DB OK" });
+  } catch (err) {
+    console.error("DB TEST ERROR:", err);
+    res.status(500).json({ error: err.message });
+  }
+});
 
 // ==========================
 // ❤️ HEALTH CHECK
