@@ -37,13 +37,15 @@ process.on("unhandledRejection", (err) => {
 // ==========================
 // 🌐 FRONTEND URL
 // ==========================
-const FRONTEND_URL = process.env.FRONTEND_URL;
-
 const allowedOrigins = [
   "http://localhost:5173",
-  FRONTEND_URL,
   "https://powerhouse-app-eight.vercel.app",
-  "https://www.powerhouse-app-eight.vercel.app"
+  "https://powerhouse-app-eight.vercel.app/",
+  "https://powerhouse-app-eight.vercel.app/login",
+  "https://powerhouse-app-eight.vercel.app/dashboard",
+  "https://powerhouse-app-eight.vercel.app/",
+  "https://powerhouse-app-eight.vercel.app",
+  process.env.FRONTEND_URL
 ].filter(Boolean);
 
 // ==========================
@@ -91,6 +93,14 @@ const taskRoutes = require("./routes/task");
 const activityRoutes = require("./routes/activity");
 const toolsRoutes = require("./routes/tools");
 
+
+app.use((req, res, next) => {
+  res.header("Access-Control-Allow-Origin", req.headers.origin);
+  res.header("Access-Control-Allow-Credentials", "true");
+  res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization, role");
+  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+  next();
+});
 // ==========================
 // 🧠 MIDDLEWARES
 // ==========================
