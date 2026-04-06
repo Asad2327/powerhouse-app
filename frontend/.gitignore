@@ -56,5 +56,3 @@ Thumbs.db
 *.njsproj
 *.sln
 *.sw?
-backend/serviceAccountKey.json
-.env

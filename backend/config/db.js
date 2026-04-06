@@ -1,55 +1,21 @@
 require('dotenv').config();
 const mysql = require('mysql2');
 
-// ==========================
-// 🚀 DATABASE CONNECTION (Railway)
-// ==========================
-const db = mysql.createPool({
-  uri: process.env.MYSQL_URL,
+// 🔥 FINAL DB CONNECTION FIX
+const db = mysql.createPool(process.env.MYSQL_URL);
 
-  waitForConnections: true,
-  connectionLimit: 10,
-  queueLimit: 0,
-
-  enableKeepAlive: true,
-  keepAliveInitialDelay: 0
-});
-
-// ==========================
-// 🔥 PROMISE SUPPORT (IMPORTANT)
-// ==========================
+// ✅ PROMISE SUPPORT
 const promiseDb = db.promise();
 
-// ==========================
-// ✅ TEST CONNECTION (SAFE)
-// ==========================
+// ✅ TEST CONNECTION
 db.getConnection((err, conn) => {
   if (err) {
-    console.log("❌ DB ERROR:", {
-      message: err.message,
-      code: err.code
-    });
+    console.error("❌ DB CONNECTION FAILED:", err.message);
   } else {
-    console.log("✅ DB Connected to Railway");
+    console.log("✅ DB Connected Successfully");
     conn.release();
   }
 });
 
-// ==========================
-// 🔄 AUTO RECONNECT HANDLING
-// ==========================
-db.on('error', (err) => {
-  console.error("🔥 DB Runtime Error:", err);
-
-  if (err.code === 'PROTOCOL_CONNECTION_LOST') {
-    console.log("⚠️ DB connection lost. Trying to reconnect...");
-  } else {
-    throw err;
-  }
-});
-
-// ==========================
-// 📦 EXPORT BOTH (SAFE)
-// ==========================
 module.exports = db;
 module.exports.promiseDb = promiseDb;

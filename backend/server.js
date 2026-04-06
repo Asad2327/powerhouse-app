@@ -13,7 +13,13 @@ const app = express();
 const server = http.createServer(app);
 server.keepAliveTimeout = 60000;
 server.headersTimeout = 65000;
+process.on("uncaughtException", (err) => {
+  console.error("🔥 UNCAUGHT EXCEPTION:", err);
+});
 
+process.on("unhandledRejection", (err) => {
+  console.error("🔥 UNHANDLED REJECTION:", err);
+});
 // ==========================
 // 🌐 FRONTEND URL (PRODUCTION FIX)
 // ==========================
@@ -36,7 +42,7 @@ const io = new Server(server, {
     methods: ["GET", "POST", "PUT", "DELETE"],
     credentials: true
   },
-  transports: ["websocket"], // ✅ FINAL FIX
+transports: ["websocket", "polling"]
 });
 
 app.set("io", io);
@@ -76,26 +82,7 @@ const toolsRoutes = require("./routes/tools");
 // 🧠 MIDDLEWARES (FINAL FIX)
 // ==========================
 app.use(cors({
-  origin: function (origin, callback) {
-    // ✅ allow requests without origin
-    if (!origin) return callback(null, true);
-
-    // ✅ normalize origin
-   const cleanOrigin = origin ? origin.replace(/\/$/, "") : "";
-
-    const isAllowed = allowedOrigins.some(o =>
-      o && cleanOrigin.includes(o.replace(/\/$/, ""))
-    );
-
-    if (isAllowed) {
-      return callback(null, true);
-    }
-
-    console.log("❌ Blocked by CORS:", origin);
-
-    // 🔥 IMPORTANT: never block in production
-    return callback(null, true);
-  },
+  origin: "*",
   methods: ["GET", "POST", "PUT", "DELETE"],
   credentials: true
 }));

@@ -16,7 +16,7 @@ if (!SOCKET_URL) {
 // 🔥 SOCKET CONNECTION
 // ==========================
 export const socket = io(SOCKET_URL, {
-  transports: ["websocket"],
+transports: ["websocket", "polling"],
   withCredentials: true,
   secure: true,
   reconnection: true,
