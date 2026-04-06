@@ -1,17 +1,16 @@
 const mysql = require("mysql2");
 
-// 🔥 Railway MYSQL URL
+// 🔥 FIXED: use connectionString properly
 const db = mysql.createPool({
-  uri: process.env.MYSQL_URL,
-  waitForConnections: true,
-  connectionLimit: 10,
-  queueLimit: 0,
-  ssl: {
-    rejectUnauthorized: false
-  }
+  host: process.env.MYSQLHOST,
+  user: process.env.MYSQLUSER,
+  password: process.env.MYSQLPASSWORD,
+  database: process.env.MYSQLDATABASE,
+  port: process.env.MYSQLPORT,
+  ssl: { rejectUnauthorized: false }
 });
 
-// ✅ IMPORTANT: test connection on start
+// ✅ TEST CONNECTION
 db.getConnection((err, conn) => {
   if (err) {
     console.error("❌ DB CONNECTION FAILED:", err.message);
