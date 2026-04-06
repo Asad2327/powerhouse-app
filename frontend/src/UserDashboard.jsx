@@ -4,7 +4,7 @@ import { getUser } from './utils/auth';
 import { Clock, ListTodo, ArrowRight, Layers, LayoutGrid, Calendar } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { socket } from './utils/socket';
-import { onMessageListener } from "../firebase";
+import { onMessageListener } from "./firebaseConfig";
 
 export default function UserDashboard() {
   const [tasks, setTasks] = useState([]);
@@ -108,8 +108,7 @@ setTimeout(() => setPopup(null), 3000);
     };
 
 
-socket.off("taskAssigned");
-socket.off("taskUpdate");
+
 
 socket.on('taskAssigned', handleTaskAssigned);
 socket.on('taskUpdate', handleTaskUpdate);

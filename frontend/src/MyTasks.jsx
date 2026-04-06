@@ -24,8 +24,7 @@ const [rejectReason, setRejectReason] = useState("");
 
     const refreshTasks = () => fetchTasks();
 
-socket.off("taskAssigned");
-socket.off("taskUpdate");
+
 
 socket.on("taskAssigned", refreshTasks);
 socket.on("taskUpdate", refreshTasks);
