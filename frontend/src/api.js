@@ -8,7 +8,6 @@ const BASE_URL = import.meta.env.VITE_API_URL;
 
 console.log("🔥 API URL:", BASE_URL);
 
-
 // ❌ safety check (bohat important)
 if (!BASE_URL) {
   console.error("❌ VITE_API_URL missing in .env");
@@ -19,15 +18,13 @@ if (!BASE_URL) {
 // ==========================
 const API = axios.create({
   baseURL: BASE_URL,
-  headers: {
-  "Content-Type": "application/json"
-},
   withCredentials: true,
   timeout: 60000, // 🔥 prevent hanging requests
   headers: {
     "Content-Type": "application/json"
   }
 });
+
 // ==========================
 // 🔥 REQUEST INTERCEPTOR
 // ==========================
