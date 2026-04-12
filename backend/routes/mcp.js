@@ -170,16 +170,31 @@ server.tool("filter_tasks", "Filter tasks", async ({ status }) => {
 
 
 // ==========================
-// 🔌 MCP CONNECTION
+// 🔥 FIXED MCP (MULTI SESSION)
 // ==========================
-let transport;
+const sessions = new Map();
 
 router.get("/mcp", async (req, res) => {
-  transport = new SSEServerTransport("/api/mcp", res);
+  const transport = new SSEServerTransport("/api/mcp", res);
+
+  sessions.set(transport.sessionId, transport);
+
+  res.on("close", () => {
+    sessions.delete(transport.sessionId);
+  });
+
   await server.connect(transport);
 });
 
 router.post("/mcp", async (req, res) => {
+  const sessionId = req.query.sessionId;
+
+  const transport = sessions.get(sessionId);
+
+  if (!transport) {
+    return res.status(400).send("Invalid session");
+  }
+
   await transport.handlePostMessage(req, res);
 });
 
