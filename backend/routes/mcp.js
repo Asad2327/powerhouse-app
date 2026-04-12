@@ -175,6 +175,13 @@ server.tool("filter_tasks", "Filter tasks", async ({ status }) => {
 const sessions = new Map();
 
 router.get("/mcp", async (req, res) => {
+  // 🔥 REQUIRED HEADERS (FIX TIMEOUT)
+  res.setHeader("Content-Type", "text/event-stream");
+  res.setHeader("Cache-Control", "no-cache");
+  res.setHeader("Connection", "keep-alive");
+
+  res.flushHeaders(); // 🔥 VERY IMPORTANT
+
   const transport = new SSEServerTransport("/api/mcp", res);
 
   sessions.set(transport.sessionId, transport);
