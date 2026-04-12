@@ -139,14 +139,19 @@ if (!fs.existsSync(uploadDir)) {
 app.use("/uploads", express.static(uploadDir));
 
 // ==========================
-// 🚀 API ROUTES
+// 🚀 API ROUTES (FIXED ORDER)
 // ==========================
+
+// 🔥 MCP ROUTE FIRST (VERY IMPORTANT)
+app.use("/api", mcpRoutes);
+
+// baaki routes same rahenge
 app.use("/api/user", userRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/task", taskRoutes);
 app.use("/api/activity", activityRoutes);
 app.use("/api/tools", toolsRoutes);
-app.use("/api", mcpRoutes);
+
 app.use(express.json());
 
 // ==========================

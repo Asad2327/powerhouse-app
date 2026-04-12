@@ -10,7 +10,6 @@ const server = new McpServer({
   version: "2.0.0",
 });
 
-
 // ==========================
 // 📊 DASHBOARD STATS
 // ==========================
@@ -30,7 +29,6 @@ server.tool("get_dashboard_stats", "Get dashboard stats", async () => {
     return { content: [{ type: "text", text: err.message }] };
   }
 });
-
 
 // ==========================
 // 📥 GET TASKS
@@ -55,7 +53,6 @@ server.tool("get_tasks", "Get all tasks", async () => {
   }
 });
 
-
 // ==========================
 // ➕ ADD TASK
 // ==========================
@@ -73,7 +70,6 @@ server.tool("add_task", "Create task", async ({ title, priority, description, us
   }
 });
 
-
 // ==========================
 // 🔄 UPDATE TASK STATUS
 // ==========================
@@ -90,7 +86,6 @@ server.tool("update_task_status", "Update task status", async ({ id, status }) =
     return { content: [{ type: "text", text: err.message }] };
   }
 });
-
 
 // ==========================
 // 👥 GET STAFF
@@ -110,7 +105,6 @@ server.tool("get_staff", "Get all staff", async () => {
   }
 });
 
-
 // ==========================
 // ➕ ADD STAFF
 // ==========================
@@ -128,7 +122,6 @@ server.tool("add_staff", "Create new staff", async ({ name, email, role }) => {
   }
 });
 
-
 // ==========================
 // 🛠 ASSIGN TOOL
 // ==========================
@@ -145,7 +138,6 @@ server.tool("assign_tool", "Assign tool to staff", async ({ tool_name, category,
     return { content: [{ type: "text", text: err.message }] };
   }
 });
-
 
 // ==========================
 // 📊 FILTER TASKS
@@ -168,19 +160,19 @@ server.tool("filter_tasks", "Filter tasks", async ({ status }) => {
   }
 });
 
-
 // ==========================
-// 🔥 FIXED MCP (MULTI SESSION)
+// 🔥 MCP FIX (FINAL)
 // ==========================
 const sessions = new Map();
 
 router.get("/mcp", async (req, res) => {
-  // 🔥 REQUIRED HEADERS (FIX TIMEOUT)
+  console.log("🔥 MCP CONNECTED");
+
   res.setHeader("Content-Type", "text/event-stream");
   res.setHeader("Cache-Control", "no-cache");
   res.setHeader("Connection", "keep-alive");
 
-  res.flushHeaders(); // 🔥 VERY IMPORTANT
+  res.flushHeaders();
 
   const transport = new SSEServerTransport("/api/mcp", res);
 
@@ -195,20 +187,18 @@ router.get("/mcp", async (req, res) => {
 
 router.post("/mcp", async (req, res) => {
   try {
-    // 🔥 FIX: sessionId from body OR query
     const sessionId = req.query.sessionId || req.body?.sessionId;
 
     const transport = sessions.get(sessionId);
 
     if (!transport) {
-      console.log("❌ Session not found:", sessionId);
       return res.status(400).send("Invalid session");
     }
 
     await transport.handlePostMessage(req, res);
 
   } catch (err) {
-    console.error("🔥 MCP POST ERROR:", err);
+    console.error("MCP ERROR:", err);
     res.status(500).send("MCP error");
   }
 });
