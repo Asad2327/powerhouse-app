@@ -147,6 +147,7 @@ app.use("/api/task", taskRoutes);
 app.use("/api/activity", activityRoutes);
 app.use("/api/tools", toolsRoutes);
 app.use("/api", mcpRoutes);
+app.use(express.json());
 
 // ==========================
 // 🧪 DB TEST ROUTE (FIXED POSITION)

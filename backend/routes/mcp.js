@@ -194,15 +194,23 @@ router.get("/mcp", async (req, res) => {
 });
 
 router.post("/mcp", async (req, res) => {
-  const sessionId = req.query.sessionId;
+  try {
+    // 🔥 FIX: sessionId from body OR query
+    const sessionId = req.query.sessionId || req.body?.sessionId;
 
-  const transport = sessions.get(sessionId);
+    const transport = sessions.get(sessionId);
 
-  if (!transport) {
-    return res.status(400).send("Invalid session");
+    if (!transport) {
+      console.log("❌ Session not found:", sessionId);
+      return res.status(400).send("Invalid session");
+    }
+
+    await transport.handlePostMessage(req, res);
+
+  } catch (err) {
+    console.error("🔥 MCP POST ERROR:", err);
+    res.status(500).send("MCP error");
   }
-
-  await transport.handlePostMessage(req, res);
 });
 
 module.exports = router;
