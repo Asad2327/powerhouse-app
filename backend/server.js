@@ -92,7 +92,7 @@ const authRoutes = require("./routes/auth");
 const taskRoutes = require("./routes/task");
 const activityRoutes = require("./routes/activity");
 const toolsRoutes = require("./routes/tools");
-
+const mcpRoutes = require("./routes/mcp");
 
 app.use((req, res, next) => {
   res.header("Access-Control-Allow-Origin", req.headers.origin);
@@ -146,6 +146,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/task", taskRoutes);
 app.use("/api/activity", activityRoutes);
 app.use("/api/tools", toolsRoutes);
+app.use("/api", mcpRoutes);
 
 // ==========================
 // 🧪 DB TEST ROUTE (FIXED POSITION)
